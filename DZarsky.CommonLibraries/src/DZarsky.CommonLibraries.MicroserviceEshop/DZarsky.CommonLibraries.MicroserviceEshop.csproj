@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Authors>Dominik Zarsky</Authors>
+		<Nullable>enable</Nullable>
+		<Version>1.0.1</Version>
+		<FileVersion>1.0.1.0</FileVersion>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Title>Common Libraries</Title>
+		<Description>Common libraries for my personal projects</Description>
+		<PackageProjectUrl>https://github.com/Loupeznik/DotnetSharedLibrary</PackageProjectUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<RepositoryUrl>https://github.com/Loupeznik/DotnetSharedLibrary</RepositoryUrl>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Folder Include="Auth\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="..\..\..\LICENSE">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	  <None Include="..\..\..\README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+	</ItemGroup>
+
+</Project>
