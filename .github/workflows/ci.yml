@@ -28,5 +28,5 @@ jobs:
       with:
         nuget-version: latest
     - name: NuGet push
-      run: nuget push **\*.nupkg -Source 'https://nuget.dzarsky.eu/' -ApiKey ${{secrets.NUGET_API_KEY}} --skip-duplicate
+      run: nuget push **\*.nupkg -Source 'https://nuget.dzarsky.eu/' -ApiKey ${{secrets.NUGET_API_KEY}} -SkipDuplicate
       shell: pwsh
