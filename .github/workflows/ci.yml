@@ -9,6 +9,10 @@ jobs:
 
     runs-on: windows-latest
 
+    defaults:
+      run:
+        working-directory: DZarsky.CommonLibraries
+
     steps:
     - uses: actions/checkout@v3
     - name: Setup .NET
@@ -16,9 +20,9 @@ jobs:
       with:
         dotnet-version: 6.x
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore DZarsky.CommonLibraries.sln
     - name: Build
-      run: dotnet build --configuration Release --no-restore 
+      run: dotnet build DZarsky.CommonLibraries.sln --configuration Release --no-restore
     - name: Setup NuGet.exe
       uses: NuGet/setup-nuget@v1.0.7
       with:
