@@ -1,6 +1,6 @@
 # DZarsky.CommonLibraries
 
-Shared libarary for my .NET projects
+Shared library for my .NET projects
 
 Currently contains following libraries:
 
