@@ -5,5 +5,7 @@
         public const string SessionHeaderName = "X-SESSION-ID";
 
         public const string UserIdHeaderName = "X-USER-ID";
+
+        public const string CommunicationTokenHeaderName = "X-COMMUNICATION-TOKEN";
     }
 }

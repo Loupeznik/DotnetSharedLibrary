@@ -10,12 +10,21 @@
 
         public TClass? Result { get; set; }
 
+        public IList<string> Errors { get; set; } = new List<string>();
+
         public MediatrBaseResult(bool isSuccess, ResultStatus status, TClass? result = null, string? message = null)
         {
             IsSuccess = isSuccess;
             Message = message;
             Result = result;
             Status = status;
+        }
+
+        public MediatrBaseResult(ResultStatus status, IList<string> errors, string? message = null)
+        {
+            Message = message;
+            Status = status;
+            Errors = errors;
         }
     }
 
