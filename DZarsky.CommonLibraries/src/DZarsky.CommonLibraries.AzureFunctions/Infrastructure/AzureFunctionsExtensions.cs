@@ -11,7 +11,7 @@ namespace DZarsky.CommonLibraries.AzureFunctions.Infrastructure
 {
     public static class AzureFunctionsExtensions
     {
-        public static IFunctionsHostBuilder AddFunctonsExtensions(this IFunctionsHostBuilder builder, IConfiguration configuration)
+        public static IFunctionsHostBuilder AddCommonFunctionServices(this IFunctionsHostBuilder builder, IConfiguration configuration)
         {
             builder.Services.AddSingleton((s) =>
             {
