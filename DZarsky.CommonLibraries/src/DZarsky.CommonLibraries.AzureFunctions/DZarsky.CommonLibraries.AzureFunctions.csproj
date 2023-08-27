@@ -5,8 +5,8 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Authors>Dominik Zarsky</Authors>
 		<Nullable>enable</Nullable>
-		<Version>1.1.0</Version>
-		<FileVersion>1.1.0.0</FileVersion>
+		<Version>1.1.1</Version>
+		<FileVersion>1.1.1.0</FileVersion>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Title>DZarsky.CommonLibraries.AzureFunctions</Title>
 		<Description>Common library for Azure Functions</Description>
@@ -22,7 +22,6 @@
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
 		<PackageReference Include="Isopoh.Cryptography.Argon2" Version="1.1.12" />
-		<PackageReference Include="Zitadel" Version="5.2.21" />
 	</ItemGroup>
 
 </Project>

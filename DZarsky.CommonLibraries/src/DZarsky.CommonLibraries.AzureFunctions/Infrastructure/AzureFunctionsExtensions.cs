@@ -7,8 +7,6 @@ using Microsoft.Azure.Cosmos.Fluent;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Zitadel.Credentials;
-using Zitadel.Extensions;
 
 namespace DZarsky.CommonLibraries.AzureFunctions.Infrastructure
 {
@@ -67,49 +65,9 @@ namespace DZarsky.CommonLibraries.AzureFunctions.Infrastructure
                 builder.Services.AddScoped<CosmosAuthManager>();
                 builder.Services.AddScoped<PasswordUtils>();
             }
-            else if (authType == AuthType.Zitadel)
-            {
-                if (string.IsNullOrWhiteSpace(cosmosConfig.DatabaseID))
-                {
-                    throw new ArgumentException("Could not set CosmosConfiguration - DatabaseID is missing");
-                }
-
-                builder.Services.AddSingleton(cosmosConfig);
-
-                var zitadelConfig = new ZitadelConfiguration
-                {
-                    Authority = configuration.GetValueFromContainer<string>("Identity.Authority"),
-                    JwtProfile = configuration.GetValueFromContainer<string>("Identity.JwtProfile"),
-                    DebugRoles = configuration.GetValueFromContainer<IList<string>>("Identity.DebugRoles")
-                };
-
-                if (string.IsNullOrWhiteSpace(zitadelConfig.Authority) || string.IsNullOrWhiteSpace(zitadelConfig.JwtProfile))
-                {
-#if DEBUG
-                    builder.Services
-                        .AddAuthorization()
-                        .AddAuthentication()
-                        .AddZitadelFake(x =>
-                        {
-                            x.Roles = zitadelConfig.DebugRoles.ToArray();
-                            x.FakeZitadelId = "functions-dev";
-                        });
-
-#else
-                    builder.Services
-                        .AddAuthorization()
-                        .AddAuthentication()
-                        .AddZitadelIntrospection(x =>
-                        {
-                            x.JwtProfile = Application.LoadFromJsonString(zitadelConfig.JwtProfile);
-                            x.Authority = zitadelConfig.Authority;
-                        });
-#endif
-                }
-            }
             else
             {
-                throw new ArgumentException("Failed to instrument authentication layer - unsupported AuthType");
+                throw new ArgumentException("Failed to instrument authentication layer - unimplemented AuthType");
             }
 
             return builder;

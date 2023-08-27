@@ -2,6 +2,10 @@
 
 public enum AuthType
 {
+    // Auth is handled by the function
     Standalone,
-    Zitadel
+    // Auth is handled via OIDC with AzureAD
+    AzureAd,
+    // Auth is handled via another identity function
+    IdentityServer
 }
