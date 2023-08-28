@@ -7,4 +7,9 @@
 
         public const string JsonContentType = "application/json";
     }
+
+    public static class HttpClients
+    {
+        public const string ZitadelClient = nameof(ZitadelClient);
+    }
 }

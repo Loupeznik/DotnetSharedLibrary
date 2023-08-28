@@ -7,5 +7,7 @@ public enum AuthType
     // Auth is handled via OIDC with AzureAD
     AzureAd,
     // Auth is handled via another identity function
-    IdentityServer
+    IdentityServer,
+    // Auth is handled via OIDC with a Zitadel instance
+    Zitadel
 }

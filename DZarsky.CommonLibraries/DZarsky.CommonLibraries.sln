@@ -5,7 +5,7 @@ VisualStudioVersion = 17.3.32922.545
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DZarsky.CommonLibraries.MicroserviceEshop", "src\DZarsky.CommonLibraries.MicroserviceEshop\DZarsky.CommonLibraries.MicroserviceEshop.csproj", "{C54EE817-96EE-4B1F-A8D7-9432121B7856}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DZarsky.CommonLibraries.AzureFunctions", "src\DZarsky.CommonLibraries.AzureFunctions\DZarsky.CommonLibraries.AzureFunctions.csproj", "{3372302B-11EC-4BF6-9E54-9CA076506509}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DZarsky.CommonLibraries.AzureFunctions", "src\DZarsky.CommonLibraries.AzureFunctions\DZarsky.CommonLibraries.AzureFunctions.csproj", "{3372302B-11EC-4BF6-9E54-9CA076506509}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

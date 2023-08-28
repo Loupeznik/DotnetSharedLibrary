@@ -1,12 +1,16 @@
 ﻿using DZarsky.CommonLibraries.AzureFunctions.Configuration;
 using DZarsky.CommonLibraries.AzureFunctions.Extensions;
+using DZarsky.CommonLibraries.AzureFunctions.General;
 using DZarsky.CommonLibraries.AzureFunctions.Models.Auth;
 using DZarsky.CommonLibraries.AzureFunctions.Security;
 using DZarsky.CommonLibraries.AzureFunctions.Security.CosmosDB;
+using DZarsky.CommonLibraries.AzureFunctions.Security.Zitadel;
 using Microsoft.Azure.Cosmos.Fluent;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Net.Http.Headers;
+using System.Text;
 
 namespace DZarsky.CommonLibraries.AzureFunctions.Infrastructure
 {
@@ -42,11 +46,18 @@ namespace DZarsky.CommonLibraries.AzureFunctions.Infrastructure
                 UsersContainerID = configuration.GetValueFromContainer<string>("CosmosDB.UserContainerID")
             };
 
+            if (string.IsNullOrWhiteSpace(cosmosConfig.DatabaseID))
+            {
+                throw new ArgumentException("Could not set CosmosConfiguration - DatabaseID is missing");
+            }
+
+            builder.Services.AddSingleton(cosmosConfig);
+
             if (authType == AuthType.Standalone)
             {
-                if (string.IsNullOrWhiteSpace(cosmosConfig.DatabaseID) || string.IsNullOrWhiteSpace(cosmosConfig.UsersContainerID))
+                if (string.IsNullOrWhiteSpace(cosmosConfig.UsersContainerID))
                 {
-                    throw new ArgumentException("Could not set CosmosConfiguration - DatabaseID or UsersContainerID is missing");
+                    throw new ArgumentException("Could not set CosmosConfiguration - UsersContainerID is missing");
                 }
 
                 var authConfig = new AuthConfiguration
@@ -59,15 +70,37 @@ namespace DZarsky.CommonLibraries.AzureFunctions.Infrastructure
                     throw new ArgumentException("ArgonSecret was not set");
                 }
 
-                builder.Services.AddSingleton(cosmosConfig);
                 builder.Services.AddSingleton(authConfig);
 
-                builder.Services.AddScoped<CosmosAuthManager>();
+                builder.Services.AddScoped<IAuthManager, CosmosAuthManager>();
                 builder.Services.AddScoped<PasswordUtils>();
+            }
+            if (authType == AuthType.Zitadel)
+            {
+                var zitadelConfig = new ZitadelConfiguration
+                {
+                    ClientId = configuration.GetValueFromContainer<string>("Zitadel.ClientId"),
+                    ClientSecret = configuration.GetValueFromContainer<string>("Zitadel.ClientSecret"),
+                    Authority = configuration.GetValueFromContainer<string>("Zitadel.Authority")
+                };
+
+                if (string.IsNullOrWhiteSpace(zitadelConfig.ClientId) || string.IsNullOrWhiteSpace(zitadelConfig.ClientSecret) || string.IsNullOrWhiteSpace(zitadelConfig.Authority))
+                {
+                    throw new ArgumentException("Could not set Zitadel configuration - required properties are missing");
+                }
+
+                builder.Services.AddHttpClient(HttpClients.ZitadelClient, client =>
+                {
+                    client.BaseAddress = new Uri(zitadelConfig.Authority);
+                    client.DefaultRequestHeaders.Authorization = 
+                        new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes($"{zitadelConfig.ClientId}:{zitadelConfig.ClientSecret}")));
+                });
+
+                builder.Services.AddScoped<IAuthManager, ZitadelAuthManager>();
             }
             else
             {
-                throw new ArgumentException("Failed to instrument authentication layer - unimplemented AuthType");
+                throw new NotImplementedException("Failed to instrument authentication layer - unimplemented AuthType");
             }
 
             return builder;
