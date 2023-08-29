@@ -5,8 +5,8 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Authors>Dominik Zarsky</Authors>
 		<Nullable>enable</Nullable>
-		<Version>1.2.0</Version>
-		<FileVersion>1.2.0.0</FileVersion>
+		<Version>1.2.1</Version>
+		<FileVersion>1.2.1.0</FileVersion>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Title>DZarsky.CommonLibraries.AzureFunctions</Title>
 		<Description>Common library for Azure Functions</Description>
