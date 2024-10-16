@@ -1,7 +1,5 @@
 ﻿using DZarsky.CommonLibraries.AzureFunctions.Configuration;
-using DZarsky.CommonLibraries.AzureFunctions.Extensions;
 using Isopoh.Cryptography.Argon2;
-using Microsoft.Extensions.Configuration;
 using System.Security.Cryptography;
 using System.Text;
 

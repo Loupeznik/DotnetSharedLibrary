@@ -6,7 +6,6 @@ using DZarsky.CommonLibraries.AzureFunctions.Security;
 using DZarsky.CommonLibraries.AzureFunctions.Security.CosmosDB;
 using DZarsky.CommonLibraries.AzureFunctions.Security.Zitadel;
 using Microsoft.Azure.Cosmos.Fluent;
-using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Headers;
@@ -16,14 +15,14 @@ namespace DZarsky.CommonLibraries.AzureFunctions.Infrastructure;
 
 public static class AzureFunctionsExtensions
 {
-    public static IFunctionsHostBuilder AddCommonFunctionServices(this IFunctionsHostBuilder builder, IConfiguration configuration, 
+    public static void AddCommonFunctionServices(this IServiceCollection services, IConfiguration configuration,
         AuthType? authType = AuthType.Standalone, bool? instrumentCosmosDb = true)
     {
         var cosmosConfig = new CosmosConfiguration();
 
         if (instrumentCosmosDb.GetValueOrDefault())
         {
-            builder.Services.AddSingleton((s) =>
+            services.AddSingleton((s) =>
             {
                 var endpoint = configuration.GetValueFromContainer<string>("CosmosDB.Endpoint");
 
@@ -32,7 +31,7 @@ public static class AzureFunctionsExtensions
                     throw new ArgumentException("CosmosDB endpoint was not set");
                 }
 
-                string authKey = configuration.GetValueFromContainer<string>("CosmosDB.AuthorizationKey");
+                var authKey = configuration.GetValueFromContainer<string>("CosmosDB.AuthorizationKey");
 
                 if (string.IsNullOrWhiteSpace(authKey))
                 {
@@ -42,18 +41,18 @@ public static class AzureFunctionsExtensions
                 var configurationBuilder = new CosmosClientBuilder(endpoint, authKey);
 
                 return configurationBuilder
-                        .Build();
+                    .Build();
             });
 
             cosmosConfig.DatabaseID = configuration.GetValueFromContainer<string>("CosmosDB.DatabaseID");
             cosmosConfig.UsersContainerID = configuration.GetValueFromContainer<string>("CosmosDB.UserContainerID");
-            
+
             if (string.IsNullOrWhiteSpace(cosmosConfig.DatabaseID))
             {
                 throw new ArgumentException("Could not set CosmosConfiguration - DatabaseID is missing");
             }
 
-            builder.Services.AddSingleton(cosmosConfig);
+            services.AddSingleton(cosmosConfig);
         }
 
         if (authType == AuthType.Standalone)
@@ -78,10 +77,10 @@ public static class AzureFunctionsExtensions
                 throw new ArgumentException("ArgonSecret was not set");
             }
 
-            builder.Services.AddSingleton(authConfig);
+            services.AddSingleton(authConfig);
 
-            builder.Services.AddScoped<IAuthManager, CosmosAuthManager>();
-            builder.Services.AddScoped<PasswordUtils>();
+            services.AddScoped<IAuthManager, CosmosAuthManager>();
+            services.AddScoped<PasswordUtils>();
         }
         else if (authType == AuthType.Zitadel)
         {
@@ -92,25 +91,27 @@ public static class AzureFunctionsExtensions
                 Authority = configuration.GetValueFromContainer<string>("Zitadel.Authority")
             };
 
-            if (string.IsNullOrWhiteSpace(zitadelConfig.ClientId) || string.IsNullOrWhiteSpace(zitadelConfig.ClientSecret) || string.IsNullOrWhiteSpace(zitadelConfig.Authority))
+            if (string.IsNullOrWhiteSpace(zitadelConfig.ClientId) ||
+                string.IsNullOrWhiteSpace(zitadelConfig.ClientSecret) ||
+                string.IsNullOrWhiteSpace(zitadelConfig.Authority))
             {
                 throw new ArgumentException("Could not set Zitadel configuration - required properties are missing");
             }
 
-            builder.Services.AddHttpClient(HttpClients.ZitadelClient, client =>
+            services.AddHttpClient(HttpClients.ZitadelClient, client =>
             {
                 client.BaseAddress = new Uri(zitadelConfig.Authority);
                 client.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes($"{zitadelConfig.ClientId}:{zitadelConfig.ClientSecret}")));
+                    new AuthenticationHeaderValue("Basic",
+                        Convert.ToBase64String(
+                            Encoding.ASCII.GetBytes($"{zitadelConfig.ClientId}:{zitadelConfig.ClientSecret}")));
             });
 
-            builder.Services.AddScoped<IAuthManager, ZitadelAuthManager>();
+            services.AddScoped<IAuthManager, ZitadelAuthManager>();
         }
         else
         {
             throw new NotImplementedException("Failed to instrument authentication layer - unimplemented AuthType");
         }
-
-        return builder;
     }
 }
